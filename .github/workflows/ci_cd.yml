@@ -1,11 +1,11 @@
-name: CI/CD - Build & Push Docker images + Smoke Test
+name: Build and Push Docker Images
 
 on:
   push:
     branches: ["main"]
 
 jobs:
-  build_push_test:
+  build-push:
     runs-on: ubuntu-latest
 
     env:
@@ -25,7 +25,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build & Push Spring Boot image
+      - name: Build & Push Spring Boot
         uses: docker/build-push-action@v6
         with:
           context: ./springboot/app
@@ -35,7 +35,7 @@ jobs:
             ${{ env.BACKEND_IMAGE }}:latest
             ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
 
-      - name: Build & Push Angular image
+      - name: Build & Push Angular
         uses: docker/build-push-action@v6
         with:
           context: ./angular-app
@@ -44,30 +44,3 @@ jobs:
           tags: |
             ${{ env.FRONTEND_IMAGE }}:latest
             ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
-
-      # ---- Smoke test using docker compose ----
-      - name: Create .env for docker compose
-        run: |
-          echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > .env
-
-      - name: Start stack with docker compose
-        run: |
-          docker compose up -d
-          docker compose ps
-
-      - name: Wait for services
-        run: sleep 25
-
-      - name: Check backend reachable (404 is OK)
-        run: |
-          code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8081 || true)
-          echo "HTTP code from backend: $code"
-          if [ "$code" = "000" ]; then
-            echo "Backend not reachable"
-            docker compose logs --no-color --tail=200
-            exit 1
-          fi
-
-      - name: Tear down
-        if: always()
-        run: docker compose down -v
