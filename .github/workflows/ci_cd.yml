@@ -31,6 +31,8 @@ jobs:
           context: ./springboot/app
           file: ./springboot/app/Dockerfile
           push: true
+          no-cache: true
+          pull: true
           tags: |
             ${{ env.BACKEND_IMAGE }}:latest
             ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
