@@ -1,6 +1,6 @@
 services:
   angular-app:
-    image: nouran10/angular-app
+    image: sadokmahdijeridi/angular-app
     ports:
       - "0.0.0.0:4200:80"
 
@@ -21,7 +21,7 @@ services:
       retries: 20
 
   spring-boot-app:
-    image: nouran10/springboot-app
+    image: sadokmahdijeridi/springboot-app
     ports:
       - "0.0.0.0:8081:8081"
     environment:
