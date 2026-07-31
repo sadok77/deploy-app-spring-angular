@@ -1,12 +1,11 @@
 package com.oauth.demo.controllers;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import com.oauth.demo.entities.User;
 import com.oauth.demo.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@CrossOrigin(origins = {"http://localhost:4200/", "http://127.0.0.1:4200"})
+
 @RestController
 @RequestMapping(value = "/user")
 public class UserController {
@@ -20,7 +19,13 @@ public class UserController {
 
     @PostMapping(value="/add")
     public User addUser(@RequestBody User user) {
-        return this.userService.addUser(user.getFirstName(),user.getLastName());
+        return this.userService.addUser(
+                user.getUsername(),
+                user.getPassword(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getRole()
+        );
     }
 
     @DeleteMapping(value="/delete/{id}")
